@@ -1,0 +1,58 @@
+name: Deploy ssh portfolio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ssh-portfolio-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Raspberry Pi
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PI_HOST }}
+          username: ${{ secrets.PI_USER }}
+          key: ${{ secrets.PI_SSH_KEY }}
+          port: ${{ secrets.PI_PORT }}
+          script: |
+            set -e
+            cd /home/xalonious/projects/portfolio-a-la-ssh
+
+            pm2 stop portfolio-ssh || true
+            pm2 flush portfolio-ssh || true
+
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+
+            rm -rf dist
+            go build -o dist/portfolio-ssh .
+
+            pm2 start portfolio-ssh
+            pm2 save
+
+      - name: Notify Discord — success
+        if: success()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: success
+          title: "✅ Deployment #${{ github.run_number }} successful"
+          description: "SSH portfolio deployed to production."
+          url: "https://whoisxander.dev"
+
+      - name: Notify Discord — failure
+        if: failure()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: failure
+          title: "❌ Deployment #${{ github.run_number }} failed"
+          description: "Check the [workflow run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details."
