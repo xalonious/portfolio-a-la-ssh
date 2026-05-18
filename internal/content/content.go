@@ -90,6 +90,12 @@ var Data = Portfolio{
 			Tech:        []string{"TypeScript", "React", "Next.js", "Tailwind CSS", "Framer Motion"},
 		},
 		{
+			Title:	   	"My SSH Portfolio",
+			Description: "The portfolio you are currently on. built as a keyboard driven TUI with Go, Bubble Tea, Lip Gloss, and Wish",
+			Repo:        "https://github.com/xalonious/portfolio-a-la-ssh",
+			Tech:        []string{"Go"},
+		},
+		{
 			Title:       "Robux Spent Calculator",
 			Description: "An Electron desktop app that tracks Robux inflow, outflow, and current balance, with charts and spending insights.",
 			Repo:        "https://github.com/xalonious/robux-spent",
