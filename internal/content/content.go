@@ -139,25 +139,15 @@ var Data = Portfolio{
 		},
 	},
 	TechGroups: []TechGroup{
-		{Name: "Frontend", Items: []string{"React", "Next.js", "TypeScript", "TailwindCSS", "JavaScript", "CSS", "HTML", "Bootstrap", "Electron"}},
-		{Name: "Backend", Items: []string{"Node.js", "Express", "Java", "C#", ".NET", "Python", "Prisma", "MySQL", "MongoDB", "SQLite"}},
+		{Name: "Frontend", Items: []string{"React", "Next.js", "TypeScript", "TailwindCSS", "JavaScript", "CSS", "HTML", "Electron"}},
+		{Name: "Backend", Items: []string{"Node.js", "Express", "Java", "C#", ".NET", "Python", "Prisma", "MySQL", "MongoDB"}},
 		{Name: "Infrastructure", Items: []string{"Docker", "Nginx", "Linux", "Bash"}},
-		{Name: "Tools", Items: []string{"Git", "GitHub", "Figma"}},
+		{Name: "Tools", Items: []string{"Git", "GitHub"}},
 	},
 	Contact: []Link{
 		{Label: "Web", URL: "https://whoisxander.dev"},
 		{Label: "Email", URL: "mailto:contact@whoisxander.dev"},
 		{Label: "GitHub", URL: "https://github.com/xalonious"},
 		{Label: "Discord", URL: "https://discordid.netlify.app/?id=531484240114876416"},
-	},
-	InfraNotes: []string{
-		"Self-hosting shows up directly in the project list: Streaming App is built around user-configured media sources, Statuswatch monitors third-party status pages, and xanderGPT runs through a local LLM via Ollama.",
-		"The web portfolio lists Docker, Nginx, Linux, and Bash as infrastructure tools.",
-	},
-	// TODO: add a more specific homelab/server inventory if the website grows a dedicated infrastructure section.
-	CTONotes: []string{
-		"Sealy is Xander's cat and CTO.",
-		"Known responsibilities include sitting on the keyboard, reviewing PRs by walking across the trackpad, and general vibes management.",
-		"The 404 page says Sealy deleted the page and was placed on a performance improvement plan. Treats suspended pending investigation.",
 	},
 }
