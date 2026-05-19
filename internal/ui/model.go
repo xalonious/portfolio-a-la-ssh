@@ -1,11 +1,13 @@
 package ui
 
 import (
+	"context"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/xalonious/portfolio-a-la-ssh/internal/content"
+	"github.com/xalonious/portfolio-a-la-ssh/internal/presence"
 )
 
 type section int
@@ -26,6 +28,8 @@ type Model struct {
 	detailOpen   bool
 	scrollOffset int
 	portfolio    content.Portfolio
+	presence     presence.Presence
+	hasPresence  bool
 }
 
 type tab struct {
@@ -49,15 +53,36 @@ func New(width, height int) Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	return tick()
+	return tea.Batch(tick(), fetchPresence())
 }
 
 type tickMsg time.Time
+type presenceTickMsg time.Time
+type presenceMsg struct {
+	presence presence.Presence
+	err      error
+}
 
 func tick() tea.Cmd {
 	return tea.Tick(120*time.Millisecond, func(t time.Time) tea.Msg {
 		return tickMsg(t)
 	})
+}
+
+func presenceTick() tea.Cmd {
+	return tea.Tick(30*time.Second, func(t time.Time) tea.Msg {
+		return presenceTickMsg(t)
+	})
+}
+
+func fetchPresence() tea.Cmd {
+	return func() tea.Msg {
+		ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
+		defer cancel()
+
+		p, err := presence.Fetch(ctx)
+		return presenceMsg{presence: p, err: err}
+	}
 }
 
 func (m Model) listTab() bool {

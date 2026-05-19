@@ -72,6 +72,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tickMsg:
 		m.frame++
 		return m, tick()
+
+	case presenceTickMsg:
+		return m, fetchPresence()
+
+	case presenceMsg:
+		if msg.err == nil {
+			m.presence = msg.presence
+			m.hasPresence = true
+		}
+		return m, presenceTick()
 	}
 
 	return m, nil
