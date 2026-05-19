@@ -110,7 +110,7 @@ var Data = Portfolio{
 	},
 	TechGroups: []TechGroup{
 		{Name: "Frontend", Items: []string{"React", "Next.js", "TypeScript", "TailwindCSS", "JavaScript", "CSS", "HTML", "Electron"}},
-		{Name: "Backend", Items: []string{"Node.js", "Express", "Java", "C#", ".NET", "Python", "Prisma", "MySQL", "MongoDB"}},
+		{Name: "Backend", Items: []string{"Node.js", "Express", "Java", "C#", ".NET", "Python", "Go", "Prisma", "MySQL", "MongoDB"}},
 		{Name: "Infrastructure", Items: []string{"Docker", "Nginx", "Linux", "Bash"}},
 		{Name: "Tools", Items: []string{"Git", "GitHub"}},
 	},
