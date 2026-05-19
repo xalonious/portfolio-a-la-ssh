@@ -79,7 +79,7 @@ var Data = Portfolio{
 		},
 		{
 			Title:       "Barber App",
-			Description: "A school project: a simple booking app where users schedule appointments with barbers. Built with React and Express for a smooth UX.",
+			Description: "A full-stack appointment booking app where users can schedule barber appointments through a clean, responsive interface.",
 			Repo:        "https://github.com/xalonious/barber-app",
 			Tech:        []string{"TypeScript", "React", "Node.js", "Bootstrap", "Express", "MySQL"},
 		},
@@ -102,40 +102,10 @@ var Data = Portfolio{
 			Tech:        []string{"JavaScript", "Node.js", "Electron", "HTML", "CSS"},
 		},
 		{
-			Title:       "BongoClicker",
-			Description: "A Windows autoclicker for bongocat. Fires every key on the keyboard in rapid succession while the cat jams along.",
-			Repo:        "https://github.com/xalonious/bongoclicker",
-			Tech:        []string{"Python", "Tkinter"},
-		},
-		{
 			Title:       "Statuswatch",
 			Description: "A self-hosted Go service that monitors third-party status pages and fires Discord webhook alerts for new incidents, updates, and resolutions.",
 			Repo:        "https://github.com/xalonious/statuswatch",
 			Tech:        []string{"Go"},
-		},
-		{
-			Title:       "Image Tool",
-			Description: "A simple CLI tool to convert and compress images with sensible defaults.",
-			Repo:        "https://github.com/xalonious/image_tool",
-			Tech:        []string{"Python"},
-		},
-		{
-			Title:       "AutoClicker",
-			Description: "A lightweight C# autoclicker to automate mouse clicks for repetitive tasks.",
-			Repo:        "https://github.com/xalonious/autoclicker",
-			Tech:        []string{"C#", ".NET"},
-		},
-		{
-			Title:       "PassGuard",
-			Description: "A simple password manager built with Electron and SQLite. Securely store and manage credentials locally.",
-			Repo:        "https://github.com/xalonious/password-manager",
-			Tech:        []string{"JavaScript", "Electron", "HTML", "CSS", "SQLite"},
-		},
-		{
-			Title:       "Backup Code Encryptor",
-			Description: "CLI tool to encrypt 2FA backup codes with a password and keep them safe from prying eyes.",
-			Repo:        "https://github.com/xalonious/backup-code-encryptor",
-			Tech:        []string{"Python"},
 		},
 	},
 	TechGroups: []TechGroup{
