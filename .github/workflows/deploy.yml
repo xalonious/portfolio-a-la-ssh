@@ -33,7 +33,7 @@ jobs:
             git clean -fd
 
             rm -rf dist
-            go build -o dist/portfolio-ssh .
+            go build -o dist/portfolio-ssh . && cp host_ed25519 host_ed25519.pub dist/
 
             pm2 start portfolio-ssh
             pm2 save

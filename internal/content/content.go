@@ -1,5 +1,3 @@
-// quick test
-
 package content
 
 type Link struct {
