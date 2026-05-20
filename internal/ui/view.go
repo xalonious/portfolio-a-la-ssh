@@ -247,12 +247,12 @@ func (m Model) renderPresenceLine(width int) string {
 
 	var detail string
 	if m.presence.ListeningToSpotify && m.presence.Spotify != nil {
-		detail = m.presence.Spotify.Song + " - " + m.presence.Spotify.Artist
+		detail = "Listening to " + m.presence.Spotify.Song + " - " + m.presence.Spotify.Artist
 	} else if game != nil {
-		detail = "playing " + game.Name
+		detail = "Playing " + game.Name
 	} else if activity := m.presence.FirstVisibleActivity(); activity != nil {
 		if activity.Type == 0 {
-			detail = "playing " + activity.Name
+			detail = "Playing " + activity.Name
 		} else {
 			detail = activity.Name
 		}
