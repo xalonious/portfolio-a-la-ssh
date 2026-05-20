@@ -2,6 +2,7 @@ package ui
 
 import (
 	"context"
+	"math/rand"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -25,11 +26,23 @@ type Model struct {
 	active       section
 	cursor       int
 	frame        int
+	introDone    bool
 	detailOpen   bool
 	scrollOffset int
 	portfolio    content.Portfolio
 	presence     presence.Presence
 	hasPresence  bool
+	introColumns []introColumn
+	introRand    *rand.Rand
+}
+
+type introColumn struct {
+	active     bool
+	head       int
+	speed      int
+	trail      int
+	cooldown   int
+	glyphShift int
 }
 
 type tab struct {
@@ -49,6 +62,7 @@ func New(width, height int) Model {
 		width:     width,
 		height:    height,
 		portfolio: content.Data,
+		introRand: rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 }
 
@@ -64,7 +78,7 @@ type presenceMsg struct {
 }
 
 func tick() tea.Cmd {
-	return tea.Tick(120*time.Millisecond, func(t time.Time) tea.Msg {
+	return tea.Tick(70*time.Millisecond, func(t time.Time) tea.Msg {
 		return tickMsg(t)
 	})
 }

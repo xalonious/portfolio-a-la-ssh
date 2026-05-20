@@ -5,6 +5,17 @@ import tea "github.com/charmbracelet/bubbletea"
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		if !m.introDone {
+			switch msg.String() {
+			case "enter", " ":
+				m.introDone = true
+				return m, nil
+			case "q", "ctrl+c", "esc":
+				return m, tea.Quit
+			}
+			return m, nil
+		}
+
 		switch msg.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
@@ -64,6 +75,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
+		m.ensureIntroColumns()
 		if m.cursor > m.maxCursor() {
 			m.cursor = m.maxCursor()
 		}
@@ -71,6 +83,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tickMsg:
 		m.frame++
+		if !m.introDone {
+			m.advanceIntroRain()
+		}
 		return m, tick()
 
 	case presenceTickMsg:
