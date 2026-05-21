@@ -53,7 +53,7 @@ func (m Model) renderProjects(width int) string {
 	var b strings.Builder
 	b.WriteString(sectionTitle("Selected work"))
 	b.WriteString("\n")
-	b.WriteString(dimStyle.Render("Everything from the site, navigable without a prompt."))
+	b.WriteString(dimStyle.Render("Everything I've built over the years. Each one taught me something new."))
 	b.WriteString("\n\n")
 
 	for i, project := range m.portfolio.Projects {
