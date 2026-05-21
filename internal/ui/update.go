@@ -52,9 +52,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "pgup":
 			m.scrollOffset -= 5
-			if m.scrollOffset < 0 {
-				m.scrollOffset = 0
-			}
 
 		case "pgdown":
 			m.scrollOffset += 5
@@ -71,6 +68,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.scrollOffset = 0
 			}
 		}
+		m.clampScrollOffset()
 
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -79,6 +77,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.cursor = m.maxCursor()
 		}
 		m.ensureCursorVisible()
+		m.clampScrollOffset()
 
 	case tickMsg:
 		m.frame++

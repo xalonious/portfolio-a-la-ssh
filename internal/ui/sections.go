@@ -91,6 +91,29 @@ func (m *Model) ensureCursorVisible() {
 	if m.scrollOffset < 0 {
 		m.scrollOffset = 0
 	}
+	m.clampScrollOffset()
+}
+
+func (m *Model) clampScrollOffset() {
+	if m.width <= 0 || m.height <= 0 {
+		m.scrollOffset = 0
+		return
+	}
+
+	width, visibleLines := m.contentMetrics()
+	totalLines := lipgloss.Height(m.renderContent(width))
+	maxOffset := totalLines - visibleLines
+	if maxOffset < 0 {
+		maxOffset = 0
+	}
+
+	if m.scrollOffset < 0 {
+		m.scrollOffset = 0
+		return
+	}
+	if m.scrollOffset > maxOffset {
+		m.scrollOffset = maxOffset
+	}
 }
 
 func (m Model) contentMetrics() (int, int) {
