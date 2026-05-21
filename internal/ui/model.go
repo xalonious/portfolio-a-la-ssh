@@ -2,7 +2,6 @@ package ui
 
 import (
 	"context"
-	"math/rand"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -32,17 +31,6 @@ type Model struct {
 	portfolio    content.Portfolio
 	presence     presence.Presence
 	hasPresence  bool
-	introColumns []introColumn
-	introRand    *rand.Rand
-}
-
-type introColumn struct {
-	active     bool
-	head       int
-	speed      int
-	trail      int
-	cooldown   int
-	glyphShift int
 }
 
 type tab struct {
@@ -62,7 +50,6 @@ func New(width, height int) Model {
 		width:     width,
 		height:    height,
 		portfolio: content.Data,
-		introRand: rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 }
 

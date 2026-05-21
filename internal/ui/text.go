@@ -116,6 +116,13 @@ func max(a, b int) int {
 	return b
 }
 
+func abs(n int) int {
+	if n < 0 {
+		return -n
+	}
+	return n
+}
+
 func introHash(x, y, frame, salt int) int {
 	v := uint32(x*73856093) ^ uint32(y*19349663) ^ uint32(frame*83492791) ^ uint32(salt*2654435761)
 	v ^= v >> 13
