@@ -39,6 +39,7 @@ func main() {
 				width, height := initialSize(session)
 				return ui.New(width, height), []tea.ProgramOption{tea.WithAltScreen()}
 			}),
+			connectionLogger,
 		),
 	)
 	if err != nil {
@@ -73,6 +74,29 @@ func envOrDefault(key, fallback string) string {
 	return fallback
 }
 
+func connectionLogger(next ssh.Handler) ssh.Handler {
+	return func(session ssh.Session) {
+		startedAt := time.Now()
+		term := terminalName(session)
+
+		log.Printf(
+			"SSH session connected remote=%s user=%q term=%q",
+			session.RemoteAddr(),
+			session.User(),
+			term,
+		)
+
+		next(session)
+
+		log.Printf(
+			"SSH session disconnected remote=%s user=%q duration=%s",
+			session.RemoteAddr(),
+			session.User(),
+			time.Since(startedAt).Round(time.Second),
+		)
+	}
+}
+
 func initialSize(session ssh.Session) (int, int) {
 	width, height := 80, 24
 	if pty, _, ok := session.Pty(); ok {
@@ -84,4 +108,11 @@ func initialSize(session ssh.Session) (int, int) {
 		}
 	}
 	return width, height
+}
+
+func terminalName(session ssh.Session) string {
+	if pty, _, ok := session.Pty(); ok {
+		return pty.Term
+	}
+	return ""
 }
