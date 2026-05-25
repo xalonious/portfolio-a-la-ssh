@@ -204,7 +204,7 @@ func (m Model) renderContact(width int) string {
 	var b strings.Builder
 	b.WriteString(sectionTitle("Let's work together"))
 	b.WriteString("\n\n")
-	b.WriteString(wrap("Have a project in mind, a question, or just want to say hello? These are the same contact paths from the website.", width))
+	b.WriteString(wrap("Have a project in mind, a question, or just want to say hello? You can reach me through any of these channels.", width))
 	b.WriteString("\n\n")
 
 	for _, link := range m.portfolio.Contact {
