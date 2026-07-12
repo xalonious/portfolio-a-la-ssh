@@ -60,10 +60,10 @@ var Data = Portfolio{
 			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind", "Prisma", "MySQL"},
 		},
 		{
-			Title:       "Serendipity Assistant",
-			Description: "A general purpose Discord bot featuring moderation tools, fun/community commands, and automation utilities.",
-			Repo:        "https://github.com/xalonious/serendipity-assistant",
-			Tech:        []string{"JavaScript", "Node.js", "MongoDB"},
+			Title:       "Bridgely",
+			Description: "A Discord-to-Roblox verification bot with profile and game-based verification, automatic group role and nickname synchronization, and configurable rank, badge, and game-pass role binds.",
+			Repo:        "https://github.com/xalonious/Bridgely",
+			Tech:        []string{"JavaScript", "Node.js", "Discord.js", "Express", "MongoDB", "Luau"},
 		},
 		{
 			Title:       "Streaming App",
