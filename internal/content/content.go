@@ -34,16 +34,16 @@ var Data = Portfolio{
 	Domain: "whoisxander.dev",
 	Role:   "Full-Stack Developer & Designer",
 	Story: []string{
-		"I am a self-taught full-stack developer who went headfirst into coding and never really came back up for air.",
-		"My background is in JavaScript, TypeScript, and Java. I build full-stack applications with a focus on clean architecture and interfaces that actually feel good to use.",
-		"I care about the open-source community and I am always experimenting with something new. Currently available for the right opportunity.",
+		"I'm a self-taught full-stack developer who builds modern web applications end to end, from interfaces that feel good to use to backends that don't fall over.",
+		"TypeScript is at the center of most of my work, especially with React and Node.js. But I'm not married to one stack. I pick the language and tools that actually fit the problem, whether that's a web app, a CLI tool, or something a client didn't even know they needed.",
+		"I'm also a little obsessed with automation. If something is repetitive, slow, or error-prone, odds are I've already turned it into a script, integration, or workflow that runs itself while I do something more interesting.",
 	},
 	Focus: []string{
 		"Full-Stack Web Development",
 		"UI & UX Design",
 		"API Design & Architecture",
 		"Self-Hosted Infrastructure",
-		"Open Source",
+		"Automation & Integrations",
 	},
 	Projects: []Project{
 		{
