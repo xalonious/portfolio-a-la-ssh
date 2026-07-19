@@ -177,12 +177,23 @@ func (m Model) renderProjectDetail(width int) string {
 	b.WriteString("\n")
 	b.WriteString(renderTags(project.Tech, width))
 	b.WriteString("\n\n")
+	if project.CaseStudy != "" {
+		b.WriteString(labelStyle.Render("Case study"))
+		b.WriteString("\n")
+		b.WriteString("  " + terminalLink(project.CaseStudy, "View the case study"))
+		b.WriteString("\n")
+	}
 	if project.Repo != "" {
+		if project.CaseStudy != "" {
+			b.WriteString("\n")
+		}
 		b.WriteString(labelStyle.Render("Repo"))
 		b.WriteString("\n")
 		b.WriteString("  " + terminalLink(project.Repo, project.Repo))
 		b.WriteString("\n")
-		b.WriteString(dimStyle.Render("  ctrl+click in terminals with OSC 8 support"))
+	}
+	if project.CaseStudy != "" || project.Repo != "" {
+		b.WriteString(dimStyle.Render("  ctrl+click links in terminals with OSC 8 support"))
 	}
 	return b.String()
 }

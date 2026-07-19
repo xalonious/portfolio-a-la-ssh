@@ -9,6 +9,7 @@ type Project struct {
 	Title       string
 	Description string
 	Repo        string
+	CaseStudy   string
 	Tech        []string
 }
 
@@ -18,28 +19,20 @@ type TechGroup struct {
 }
 
 type Portfolio struct {
-	Name       string
 	Handle     string
 	Domain     string
 	Role       string
-	Location   string
-	Tagline    string
 	Story      []string
 	Focus      []string
 	Projects   []Project
 	TechGroups []TechGroup
 	Contact    []Link
-	InfraNotes []string
-	CTONotes   []string
 }
 
 var Data = Portfolio{
-	Name:     "Xander",
-	Handle:   "xalonious",
-	Domain:   "whoisxander.dev",
-	Role:     "Full-Stack Developer & Designer",
-	Location: "Belgium",
-	Tagline:  "I build things for the web. Self-taught, full-stack, 7 years in and still hooked.",
+	Handle: "xalonious",
+	Domain: "whoisxander.dev",
+	Role:   "Full-Stack Developer & Designer",
 	Story: []string{
 		"I am a self-taught full-stack developer who went headfirst into coding and never really came back up for air.",
 		"My background is in JavaScript, TypeScript, and Java. I build full-stack applications with a focus on clean architecture and interfaces that actually feel good to use.",
@@ -57,6 +50,21 @@ var Data = Portfolio{
 			Title:       "Serendipity Scheduling App",
 			Description: "A centralized scheduling web app and API for managing staff shifts and trainings for a Roblox roleplay group.",
 			Repo:        "https://github.com/xalonious/serendipity-scheduling-app",
+			CaseStudy:   "https://whoisxander.dev/projects/serendipity-scheduling-app",
+			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind", "Prisma", "MySQL"},
+		},
+		{
+			Title:       "Streaming App",
+			Description: "A self-hosted media streaming web app for discovering and playing movies and TV shows from user-configured sources.",
+			Repo:        "https://github.com/xalonious/streaming-app",
+			CaseStudy:   "https://whoisxander.dev/projects/streaming-app",
+			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind"},
+		},
+		{
+			Title:       "xanderGPT",
+			Description: "A ChatGPT-style web app powered by a local LLM via Ollama, featuring real-time streaming responses, persistent conversations and web search.",
+			Repo:        "https://github.com/xalonious/xanderGPT",
+			CaseStudy:   "https://whoisxander.dev/projects/xandergpt",
 			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind", "Prisma", "MySQL"},
 		},
 		{
@@ -64,18 +72,6 @@ var Data = Portfolio{
 			Description: "A Discord-to-Roblox verification bot with profile and game-based verification, automatic group role and nickname synchronization, and configurable rank, badge, and game-pass role binds.",
 			Repo:        "https://github.com/xalonious/Bridgely",
 			Tech:        []string{"JavaScript", "Node.js", "Discord.js", "Express", "MongoDB", "Luau"},
-		},
-		{
-			Title:       "Streaming App",
-			Description: "A self-hosted media streaming web app for discovering and playing movies and TV shows from user-configured sources.",
-			Repo:        "https://github.com/xalonious/streaming-app",
-			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind"},
-		},
-		{
-			Title:       "xanderGPT",
-			Description: "A ChatGPT-style web app powered by a local LLM via Ollama, featuring real-time streaming responses, persistent conversations and web search.",
-			Repo:        "https://github.com/xalonious/xanderGPT",
-			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind", "Prisma", "MySQL"},
 		},
 		{
 			Title:       "Barber App",
@@ -90,7 +86,7 @@ var Data = Portfolio{
 			Tech:        []string{"TypeScript", "React", "Next.js", "Tailwind CSS", "Framer Motion"},
 		},
 		{
-			Title:	   	"My SSH Portfolio",
+			Title:       "My SSH Portfolio",
 			Description: "The portfolio you are currently on. built as a keyboard driven TUI with Go, Bubble Tea, Lip Gloss, and Wish",
 			Repo:        "https://github.com/xalonious/portfolio-a-la-ssh",
 			Tech:        []string{"Go"},
@@ -106,6 +102,12 @@ var Data = Portfolio{
 			Description: "A self-hosted Go service that monitors third-party status pages and fires Discord webhook alerts for new incidents, updates, and resolutions.",
 			Repo:        "https://github.com/xalonious/statuswatch",
 			Tech:        []string{"Go"},
+		},
+		{
+			Title:       "Media Tool",
+			Description: "A cross-platform Python CLI for converting, compressing, and precisely cutting images, audio, and video, with batch procesing and a project-local FFmpeg runtime.",
+			Repo:        "https://github.com/xalonious/media_tool",
+			Tech:        []string{"Python", "FFmpeg", "Pillow"},
 		},
 	},
 	TechGroups: []TechGroup{
