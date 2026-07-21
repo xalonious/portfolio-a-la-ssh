@@ -62,7 +62,7 @@ var Data = Portfolio{
 		},
 		{
 			Title:       "xanderGPT",
-			Description: "A ChatGPT-style web app powered by a local LLM via Ollama, featuring real-time streaming responses, persistent conversations and web search.",
+			Description: "A self-hosted ChatGPT-style app powered by Qwen3 through Ollama, with streamed reasoning, persistent conversations, and web-aware tool orchestration.",
 			Repo:        "https://github.com/xalonious/xanderGPT",
 			CaseStudy:   "https://whoisxander.dev/projects/xandergpt",
 			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind", "Prisma", "MySQL"},
