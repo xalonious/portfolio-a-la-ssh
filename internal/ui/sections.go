@@ -189,11 +189,8 @@ func (m Model) renderProjectDetail(width int) string {
 		}
 		b.WriteString(labelStyle.Render("Repo"))
 		b.WriteString("\n")
-		b.WriteString("  " + terminalLink(project.Repo, project.Repo))
+		b.WriteString("  " + terminalLink(project.Repo, "View the repository"))
 		b.WriteString("\n")
-	}
-	if project.CaseStudy != "" || project.Repo != "" {
-		b.WriteString(dimStyle.Render("  ctrl+click links in terminals with OSC 8 support"))
 	}
 	return b.String()
 }
