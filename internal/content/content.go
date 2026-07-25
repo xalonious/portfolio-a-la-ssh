@@ -47,6 +47,13 @@ var Data = Portfolio{
 	},
 	Projects: []Project{
 		{
+			Title:       "xanderGPT",
+			Description: "A self-hosted ChatGPT-style app powered by Qwen3 through Ollama, with streamed reasoning, persistent conversations, and web-aware tool orchestration.",
+			Repo:        "https://github.com/xalonious/xanderGPT",
+			CaseStudy:   "https://whoisxander.dev/projects/xandergpt",
+			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind", "Prisma", "MySQL"},
+		},
+		{
 			Title:       "Serendipity Scheduling App",
 			Description: "A centralized scheduling web app and API for managing staff shifts and trainings for a Roblox roleplay group.",
 			Repo:        "https://github.com/xalonious/serendipity-scheduling-app",
@@ -59,13 +66,6 @@ var Data = Portfolio{
 			Repo:        "https://github.com/xalonious/streaming-app",
 			CaseStudy:   "https://whoisxander.dev/projects/streaming-app",
 			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind"},
-		},
-		{
-			Title:       "xanderGPT",
-			Description: "A self-hosted ChatGPT-style app powered by Qwen3 through Ollama, with streamed reasoning, persistent conversations, and web-aware tool orchestration.",
-			Repo:        "https://github.com/xalonious/xanderGPT",
-			CaseStudy:   "https://whoisxander.dev/projects/xandergpt",
-			Tech:        []string{"TypeScript", "React", "Node.js", "Express", "Tailwind", "Prisma", "MySQL"},
 		},
 		{
 			Title:       "Bridgely",
