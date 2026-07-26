@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -14,22 +15,33 @@ import (
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	bm "github.com/charmbracelet/wish/bubbletea"
+	"github.com/joho/godotenv"
 	"github.com/muesli/termenv"
 
+	"github.com/xalonious/portfolio-a-la-ssh/internal/content"
+	"github.com/xalonious/portfolio-a-la-ssh/internal/projects"
 	"github.com/xalonious/portfolio-a-la-ssh/internal/ui"
 )
 
 const (
-	defaultAddress = ":2323"
-	defaultHostKey = "./host_ed25519"
+	defaultAddress      = ":2323"
+	defaultHostKey      = "./host_ed25519"
+	defaultDatabasePath = "D:/coding/portfolio/.data/portfolio.db"
 )
 
 func main() {
 	log.SetOutput(os.Stdout)
+	loadDotEnv()
 	lipgloss.SetColorProfile(termenv.TrueColor)
 
 	address := envOrDefault("SSH_PORTFOLIO_ADDR", defaultAddress)
 	hostKeyPath := envOrDefault("SSH_PORTFOLIO_HOST_KEY", defaultHostKey)
+	databasePath := envOrDefault("PORTFOLIO_DATABASE_PATH", defaultDatabasePath)
+	projectRepository := projects.NewSQLiteRepository(
+		databasePath,
+		"https://"+content.Data.Domain+"/projects",
+		log.Default(),
+	)
 
 	server, err := wish.NewServer(
 		wish.WithAddress(address),
@@ -37,7 +49,17 @@ func main() {
 		wish.WithMiddleware(
 			bm.Middleware(func(session ssh.Session) (tea.Model, []tea.ProgramOption) {
 				width, height := initialSize(session)
-				return ui.New(width, height), []tea.ProgramOption{tea.WithAltScreen()}
+
+				ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
+				defer cancel()
+				loadedProjects, loadErr := projectRepository.Load(ctx)
+				if loadErr != nil {
+					log.Printf("could not load published projects database=%q: %v", databasePath, loadErr)
+				}
+
+				portfolio := content.Data
+				portfolio.Projects = loadedProjects
+				return ui.New(width, height, portfolio, loadErr), []tea.ProgramOption{tea.WithAltScreen()}
 			}),
 			connectionLogger,
 		),
@@ -64,6 +86,26 @@ func main() {
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatalf("shutdown error: %v", err)
+	}
+}
+
+func loadDotEnv() {
+	paths := []string{".env"}
+	if executablePath, err := os.Executable(); err == nil {
+		paths = append(paths, filepath.Join(filepath.Dir(executablePath), ".env"))
+	}
+
+	seen := make(map[string]bool, len(paths))
+	for _, path := range paths {
+		absolutePath, err := filepath.Abs(path)
+		if err != nil || seen[absolutePath] {
+			continue
+		}
+		seen[absolutePath] = true
+
+		if err := godotenv.Load(absolutePath); err != nil && !errors.Is(err, os.ErrNotExist) {
+			log.Printf("could not load environment file path=%q: %v", absolutePath, err)
+		}
 	}
 }
 

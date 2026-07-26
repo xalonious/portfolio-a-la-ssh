@@ -57,7 +57,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.scrollOffset += 5
 
 		case "enter":
-			if m.active == projectsSection && !m.detailOpen {
+			if m.active == projectsSection && !m.detailOpen && len(m.portfolio.Projects) > 0 {
 				m.detailOpen = true
 				m.scrollOffset = 0
 			}

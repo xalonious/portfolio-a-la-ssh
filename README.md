@@ -18,6 +18,7 @@ ssh term.whoisxander.dev -p 2323
 - Responsive layout for different terminal sizes
 - Keyboard navigation with tabs, arrows, enter, escape, and quit controls
 - Project browser with detail views and scroll indicators
+- Read-only SQLite project catalog loaded from the Next.js CMS for each new SSH session
 - OSC 8 terminal hyperlinks where supported
 - Custom terminal styling inspired by the web portfolio
 - Animated sidebar mascot

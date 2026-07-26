@@ -29,6 +29,7 @@ type Model struct {
 	detailOpen   bool
 	scrollOffset int
 	portfolio    content.Portfolio
+	projectsErr  bool
 	presence     presence.Presence
 	hasPresence  bool
 }
@@ -45,11 +46,12 @@ var tabs = []tab{
 	{Full: "Contact", Short: "Contact"},
 }
 
-func New(width, height int) Model {
+func New(width, height int, portfolio content.Portfolio, projectsErr error) Model {
 	return Model{
-		width:     width,
-		height:    height,
-		portfolio: content.Data,
+		width:       width,
+		height:      height,
+		portfolio:   portfolio,
+		projectsErr: projectsErr != nil,
 	}
 }
 
@@ -91,7 +93,7 @@ func (m Model) listTab() bool {
 }
 
 func (m Model) maxCursor() int {
-	if m.active == projectsSection {
+	if m.active == projectsSection && len(m.portfolio.Projects) > 0 {
 		return len(m.portfolio.Projects) - 1
 	}
 	return 0

@@ -56,6 +56,17 @@ func (m Model) renderProjects(width int) string {
 	b.WriteString(dimStyle.Render("Everything I've built over the years. Each one taught me something new."))
 	b.WriteString("\n\n")
 
+	if m.projectsErr {
+		b.WriteString(labelStyle.Render("Projects are temporarily unavailable."))
+		b.WriteString("\n")
+		b.WriteString(dimStyle.Render("Please reconnect in a moment to try again."))
+		return b.String()
+	}
+	if len(m.portfolio.Projects) == 0 {
+		b.WriteString(dimStyle.Render("No published projects are available right now."))
+		return b.String()
+	}
+
 	for i, project := range m.portfolio.Projects {
 		selected := i == m.cursor
 		prefix := "  "
@@ -75,7 +86,7 @@ func (m Model) renderProjects(width int) string {
 }
 
 func (m *Model) ensureCursorVisible() {
-	if !m.listTab() {
+	if !m.listTab() || len(m.portfolio.Projects) == 0 {
 		return
 	}
 
