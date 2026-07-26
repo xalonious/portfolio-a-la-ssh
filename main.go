@@ -24,9 +24,8 @@ import (
 )
 
 const (
-	defaultAddress      = ":2323"
-	defaultHostKey      = "./host_ed25519"
-	defaultDatabasePath = "D:/coding/portfolio/.data/portfolio.db"
+	defaultAddress = ":2323"
+	defaultHostKey = "./host_ed25519"
 )
 
 func main() {
@@ -36,7 +35,7 @@ func main() {
 
 	address := envOrDefault("SSH_PORTFOLIO_ADDR", defaultAddress)
 	hostKeyPath := envOrDefault("SSH_PORTFOLIO_HOST_KEY", defaultHostKey)
-	databasePath := envOrDefault("PORTFOLIO_DATABASE_PATH", defaultDatabasePath)
+	databasePath := os.Getenv("PORTFOLIO_DATABASE_PATH")
 	projectRepository := projects.NewSQLiteRepository(
 		databasePath,
 		"https://"+content.Data.Domain+"/projects",
@@ -90,23 +89,20 @@ func main() {
 }
 
 func loadDotEnv() {
-	paths := []string{".env"}
-	if executablePath, err := os.Executable(); err == nil {
-		paths = append(paths, filepath.Join(filepath.Dir(executablePath), ".env"))
+	executablePath, err := os.Executable()
+	if err != nil {
+		log.Printf("could not locate executable for .env loading: %v", err)
+		return
 	}
 
-	seen := make(map[string]bool, len(paths))
-	for _, path := range paths {
-		absolutePath, err := filepath.Abs(path)
-		if err != nil || seen[absolutePath] {
-			continue
+	envPath := filepath.Join(filepath.Dir(executablePath), ".env")
+	if err := godotenv.Load(envPath); err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			log.Printf("could not load environment file path=%q: %v", envPath, err)
 		}
-		seen[absolutePath] = true
-
-		if err := godotenv.Load(absolutePath); err != nil && !errors.Is(err, os.ErrNotExist) {
-			log.Printf("could not load environment file path=%q: %v", absolutePath, err)
-		}
+		return
 	}
+	log.Printf("loaded environment file path=%q", envPath)
 }
 
 func envOrDefault(key, fallback string) string {
