@@ -58,6 +58,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "enter":
 			if m.active == projectsSection && !m.detailOpen && len(m.portfolio.Projects) > 0 {
+				m.listOffset = m.scrollOffset
 				m.detailOpen = true
 				m.scrollOffset = 0
 			}
@@ -65,7 +66,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "esc", "backspace":
 			if m.detailOpen {
 				m.detailOpen = false
-				m.scrollOffset = 0
+				m.scrollOffset = m.listOffset
+				m.ensureCursorVisible()
 			}
 		}
 		m.clampScrollOffset()

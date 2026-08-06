@@ -28,6 +28,7 @@ type Model struct {
 	introDone    bool
 	detailOpen   bool
 	scrollOffset int
+	listOffset   int
 	portfolio    content.Portfolio
 	projectsErr  bool
 	presence     presence.Presence
@@ -103,6 +104,7 @@ func (m *Model) resetForSection() {
 	m.cursor = 0
 	m.detailOpen = false
 	m.scrollOffset = 0
+	m.listOffset = 0
 }
 
 func (m *Model) nextSection() {
