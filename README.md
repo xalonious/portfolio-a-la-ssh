@@ -3,6 +3,10 @@
 An SSH accessible terminal portfolio for [whoisxander.dev](https://whoisxander.dev).  
 Built with Go, Bubble Tea, Lip Gloss, and Wish.
 
+## Preview
+
+![Animated preview of the SSH portfolio](preview/preview.gif)
+
 ## Overview
 
 portfolio-a-la-ssh runs a small SSH server that opens directly into a polished keyboard driven TUI portfolio. It is not a fake command shell, visitors can tab through sections, browse projects, open details, and find contact links from inside their terminal.
