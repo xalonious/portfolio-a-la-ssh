@@ -114,8 +114,13 @@ func envOrDefault(key, fallback string) string {
 
 func connectionLogger(next ssh.Handler) ssh.Handler {
 	return func(session ssh.Session) {
-		startedAt := time.Now()
 		term := terminalName(session)
+		if session.User() == "root" && term == "" {
+			_ = session.Exit(1)
+			_ = session.Close()
+			return
+		}
+		startedAt := time.Now()
 
 		log.Printf(
 			"SSH session connected remote=%s user=%q term=%q",
