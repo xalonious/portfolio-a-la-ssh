@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -18,6 +19,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/muesli/termenv"
 
+	"github.com/xalonious/portfolio-a-la-ssh/internal/achievements"
 	"github.com/xalonious/portfolio-a-la-ssh/internal/content"
 	"github.com/xalonious/portfolio-a-la-ssh/internal/projects"
 	"github.com/xalonious/portfolio-a-la-ssh/internal/ui"
@@ -36,6 +38,8 @@ func main() {
 	address := envOrDefault("SSH_PORTFOLIO_ADDR", defaultAddress)
 	hostKeyPath := envOrDefault("SSH_PORTFOLIO_HOST_KEY", defaultHostKey)
 	databasePath := os.Getenv("PORTFOLIO_DATABASE_PATH")
+	achievementTracker := achievements.NewTracker(databasePath, os.Getenv("SSH_ACHIEVEMENT_IP_HASH_KEY"), log.Default())
+	defer achievementTracker.Close()
 	projectRepository := projects.NewSQLiteRepository(
 		databasePath,
 		"https://"+content.Data.Domain+"/projects",
@@ -60,7 +64,7 @@ func main() {
 				portfolio.Projects = loadedProjects
 				return ui.New(width, height, portfolio, loadErr), []tea.ProgramOption{tea.WithAltScreen()}
 			}),
-			connectionLogger,
+			connectionLogger(achievementTracker),
 		),
 	)
 	if err != nil {
@@ -112,31 +116,54 @@ func envOrDefault(key, fallback string) string {
 	return fallback
 }
 
-func connectionLogger(next ssh.Handler) ssh.Handler {
-	return func(session ssh.Session) {
-		term := terminalName(session)
-		if session.User() == "root" && term == "" {
-			_ = session.Exit(1)
-			_ = session.Close()
-			return
+type connectionRecorder interface {
+	Record(net.Addr, time.Time)
+}
+
+type recordedSessionKey struct{ session ssh.Session }
+
+func connectionLogger(recorder connectionRecorder) wish.Middleware {
+	return func(next ssh.Handler) ssh.Handler {
+		return func(session ssh.Session) {
+			term := terminalName(session)
+			if session.User() == "root" && term == "" {
+				_ = session.Exit(1)
+				_ = session.Close()
+				return
+			}
+			startedAt := time.Now()
+
+			log.Printf(
+				"SSH session connected remote=%s user=%q term=%q",
+				session.RemoteAddr(),
+				session.User(),
+				term,
+			)
+
+			_, _, interactive := session.Pty()
+			ctx := session.Context()
+			if recorder != nil && interactive && len(session.Command()) == 0 && session.Subsystem() == "" && ctx.Err() == nil {
+				key := recordedSessionKey{session: session}
+				ctx.Lock()
+				first := ctx.Value(key) == nil
+				if first {
+					ctx.SetValue(key, true)
+				}
+				ctx.Unlock()
+				if first {
+					recorder.Record(session.RemoteAddr(), startedAt)
+				}
+			}
+
+			next(session)
+
+			log.Printf(
+				"SSH session disconnected remote=%s user=%q duration=%s",
+				session.RemoteAddr(),
+				session.User(),
+				time.Since(startedAt).Round(time.Second),
+			)
 		}
-		startedAt := time.Now()
-
-		log.Printf(
-			"SSH session connected remote=%s user=%q term=%q",
-			session.RemoteAddr(),
-			session.User(),
-			term,
-		)
-
-		next(session)
-
-		log.Printf(
-			"SSH session disconnected remote=%s user=%q duration=%s",
-			session.RemoteAddr(),
-			session.User(),
-			time.Since(startedAt).Round(time.Second),
-		)
 	}
 }
 
