@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"net"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -38,7 +37,7 @@ func main() {
 	address := envOrDefault("SSH_PORTFOLIO_ADDR", defaultAddress)
 	hostKeyPath := envOrDefault("SSH_PORTFOLIO_HOST_KEY", defaultHostKey)
 	databasePath := os.Getenv("PORTFOLIO_DATABASE_PATH")
-	achievementTracker := achievements.NewTracker(databasePath, os.Getenv("SSH_ACHIEVEMENT_IP_HASH_KEY"), log.Default())
+	achievementTracker := achievements.NewTracker(databasePath, log.Default())
 	defer achievementTracker.Close()
 	projectRepository := projects.NewSQLiteRepository(
 		databasePath,
@@ -117,7 +116,7 @@ func envOrDefault(key, fallback string) string {
 }
 
 type connectionRecorder interface {
-	Record(net.Addr, time.Time)
+	Record(string, time.Time)
 }
 
 type recordedSessionKey struct{ session ssh.Session }
@@ -132,17 +131,23 @@ func connectionLogger(recorder connectionRecorder) wish.Middleware {
 				return
 			}
 			startedAt := time.Now()
+			username := session.User()
+			tracked := achievements.IsVisitorToken(username)
+			loggedUsername := username
+			if tracked {
+				loggedUsername = "[achievement visitor]"
+			}
 
 			log.Printf(
 				"SSH session connected remote=%s user=%q term=%q",
 				session.RemoteAddr(),
-				session.User(),
+				loggedUsername,
 				term,
 			)
 
 			_, _, interactive := session.Pty()
 			ctx := session.Context()
-			if recorder != nil && interactive && len(session.Command()) == 0 && session.Subsystem() == "" && ctx.Err() == nil {
+			if recorder != nil && tracked && interactive && len(session.Command()) == 0 && session.Subsystem() == "" && ctx.Err() == nil {
 				key := recordedSessionKey{session: session}
 				ctx.Lock()
 				first := ctx.Value(key) == nil
@@ -151,7 +156,7 @@ func connectionLogger(recorder connectionRecorder) wish.Middleware {
 				}
 				ctx.Unlock()
 				if first {
-					recorder.Record(session.RemoteAddr(), startedAt)
+					recorder.Record(username, startedAt)
 				}
 			}
 
@@ -160,7 +165,7 @@ func connectionLogger(recorder connectionRecorder) wish.Middleware {
 			log.Printf(
 				"SSH session disconnected remote=%s user=%q duration=%s",
 				session.RemoteAddr(),
-				session.User(),
+				loggedUsername,
 				time.Since(startedAt).Round(time.Second),
 			)
 		}

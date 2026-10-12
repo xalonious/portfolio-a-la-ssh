@@ -2,15 +2,13 @@ package achievements
 
 import (
 	"context"
-	"crypto/hmac"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
 	"fmt"
-	"net"
-	"net/netip"
 	"net/url"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -23,14 +21,12 @@ type Logger interface {
 }
 
 type connection struct {
-	ipHash      string
+	tokenHash   string
 	connectedAt int64
 }
 
-
 type Tracker struct {
 	db     *sql.DB
-	key    string
 	logger Logger
 	queue  chan connection
 	ctx    context.Context
@@ -38,10 +34,10 @@ type Tracker struct {
 	wg     sync.WaitGroup
 }
 
-func NewTracker(databasePath, key string, logger Logger) *Tracker {
-	if strings.TrimSpace(databasePath) == "" || len([]byte(key)) < 32 {
+func NewTracker(databasePath string, logger Logger) *Tracker {
+	if strings.TrimSpace(databasePath) == "" {
 		if logger != nil {
-			logger.Printf("SSH achievement tracking disabled: configure PORTFOLIO_DATABASE_PATH and SSH_ACHIEVEMENT_IP_HASH_KEY (at least 32 bytes)")
+			logger.Printf("SSH achievement tracking disabled: configure PORTFOLIO_DATABASE_PATH")
 		}
 		return nil
 	}
@@ -62,43 +58,28 @@ func NewTracker(databasePath, key string, logger Logger) *Tracker {
 	db.SetMaxOpenConns(1)
 	db.SetMaxIdleConns(1)
 	ctx, cancel := context.WithCancel(context.Background())
-	tracker := &Tracker{db: db, key: key, logger: logger, queue: make(chan connection, 64), ctx: ctx, cancel: cancel}
+	tracker := &Tracker{db: db, logger: logger, queue: make(chan connection, 64), ctx: ctx, cancel: cancel}
 	tracker.wg.Add(1)
 	go tracker.run()
 	return tracker
 }
 
-func NormalizeRemoteIP(remote net.Addr) (string, error) {
-	if remote == nil {
-		return "", fmt.Errorf("missing remote address")
-	}
-	host, _, err := net.SplitHostPort(remote.String())
-	if err != nil {
-		return "", fmt.Errorf("invalid remote address")
-	}
-	ip, err := netip.ParseAddr(host)
-	if err != nil {
-		return "", fmt.Errorf("invalid remote IP")
-	}
-	return ip.Unmap().WithZone("").String(), nil
+var visitorTokenPattern = regexp.MustCompile(`^x_[0-9a-f]{6}$`)
+
+func IsVisitorToken(username string) bool {
+	return len(username) == 8 && visitorTokenPattern.MatchString(username)
 }
 
-func HashIP(ip, key string) string {
-	hash := hmac.New(sha256.New, []byte(key))
-	_, _ = hash.Write([]byte(ip))
-	return hex.EncodeToString(hash.Sum(nil))
+func HashVisitorToken(token string) string {
+	hash := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(hash[:])
 }
 
-func (t *Tracker) Record(remote net.Addr, connectedAt time.Time) {
-	if t == nil {
+func (t *Tracker) Record(token string, connectedAt time.Time) {
+	if t == nil || !IsVisitorToken(token) {
 		return
 	}
-	ip, err := NormalizeRemoteIP(remote)
-	if err != nil {
-		t.warn(err)
-		return
-	}
-	record := connection{ipHash: HashIP(ip, t.key), connectedAt: connectedAt.UnixMilli()}
+	record := connection{tokenHash: HashVisitorToken(token), connectedAt: connectedAt.UnixMilli()}
 	select {
 	case <-t.ctx.Done():
 	case t.queue <- record:
@@ -126,8 +107,8 @@ func (t *Tracker) run() {
 
 func (t *Tracker) insert(ctx context.Context, record connection) error {
 	_, err := t.db.ExecContext(ctx,
-		"INSERT INTO ssh_achievement_connections (ip_hash, connected_at) VALUES (?, ?)",
-		record.ipHash, record.connectedAt,
+		"INSERT INTO ssh_achievement_connections (token_hash, connected_at) VALUES (?, ?)",
+		record.tokenHash, record.connectedAt,
 	)
 	return err
 }
@@ -154,7 +135,6 @@ func writableDSN(databasePath string) (string, error) {
 	}
 	databaseURL := url.URL{Scheme: "file", Opaque: filepath.ToSlash(absolutePath)}
 	query := databaseURL.Query()
-	// Do not create a new database if the shared path is missing/misconfigured.
 	query.Set("mode", "rw")
 	query.Set("_pragma", "busy_timeout(5000)")
 	databaseURL.RawQuery = query.Encode()
